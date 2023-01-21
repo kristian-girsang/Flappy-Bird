@@ -28,11 +28,15 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == pygame.KEYDOWN: # check if any of the keyboard pressed
+            if event.key == pygame.K_SPACE:
+                bird_movement = 0
+                bird_movement -= 12
 
     screen.blit(bg_surface,(0,0))
 
-    bird_movement += gravity
-    
+    bird_movement += gravity # gravity is increasing downward
+    bird_rect.centery += bird_movement
     screen.blit(bird_surface,bird_rect)
     floor_x_pos -= 1
     draw_floor()
