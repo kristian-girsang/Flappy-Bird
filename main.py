@@ -33,6 +33,15 @@ def check_collision(pipes):
 
     return True
 
+def rotate_bird(bird):
+    new_bird = pygame.transform.rotozoom(bird, -bird_movement * 3,1)
+    return new_bird
+
+def bird_animation():
+    new_bird = bird_frames[bird_index]
+    new_bird_rect = new_bird.get_rect(center = (100,bird_rect.centery))
+    return new_bird,new_bird_rect
+
 pygame.init()
 screen = pygame.display.set_mode((576,1024))
 clock = pygame.time.Clock()
@@ -49,9 +58,20 @@ floor_surface = pygame.image.load('assets/base.png').convert()
 floor_surface = pygame.transform.scale2x(floor_surface)
 floor_x_pos = 0
 
-bird_surface = pygame.image.load('assets/bluebird-midflap.png').convert()
-bird_surface = pygame.transform.scale2x(bird_surface)
+bird_downflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-downflap.png').convert_alpha())
+bird_midflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-midflap.png').convert_alpha())
+bird_upflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-upflap.png').convert_alpha())
+bird_frames = [bird_downflap,bird_midflap,bird_upflap]
+bird_index = 0
+bird_surface = bird_frames[bird_index]
 bird_rect = bird_surface.get_rect(center = (100,512))
+
+BIRDFLAP = pygame.USEREVENT + 1
+pygame.time.set_timer(BIRDFLAP,200)
+
+# bird_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+# bird_surface = pygame.transform.scale2x(bird_surface)
+# bird_rect = bird_surface.get_rect(center = (100,512))
 
 pipe_surface = pygame.image.load('assets/pipe-green.png')
 pipe_surface = pygame.transform.scale2x(pipe_surface)
@@ -78,13 +98,23 @@ while True:
         if event.type == SPAWNPIPE:
             pipe_list.extend(create_pipe()) # create a new pipe
 
+        if event.type == BIRDFLAP:
+            if bird_index < 2:
+                bird_index += 1
+            else:
+                bird_index = 0
+            
+            bird_surface,bird_rect = bird_animation()
+
+
     screen.blit(bg_surface,(0,0))
     
     if game_active:
         # Bird
         bird_movement += gravity # gravity is increasing downward
+        rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
-        screen.blit(bird_surface,bird_rect)
+        screen.blit(rotated_bird,bird_rect)
         game_active = check_collision(pipe_list)
 
         # Pipes
