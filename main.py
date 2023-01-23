@@ -102,8 +102,13 @@ def update_score(score,high_score):
 
 # Initialize pygame and set the screen size
 pygame.init()
+# Set the screen size 
 screen = pygame.display.set_mode((576,1024))
-clock = pygame.time.Clock()
+# Set caption of the screen window
+pygame.display.set_caption('Flappy Bird')
+# Create a clock to control the frame rate
+clock = pygame.time.Clock() 
+# Load the font for the game text
 game_font = pygame.font.Font('04B_19.TTF',40)
 
 # Game variables
